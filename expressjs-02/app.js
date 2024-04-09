@@ -1,21 +1,16 @@
 const express=require('express');
 const app=express();
+const userRouter=require("./routes/users.route");
+
+app.use("/api/users", userRouter);
 
 app.get('/', (req, res)=>{
     res.send("home router");
 })
 
-app.get('/about', (req, res)=>{
-    res.send("About router");
-})
-app.post('/', (req, res)=>{
-    res.send("post router");
-})
-app.put('/', (req, res)=>{
-    res.send("put router");
-})
-app.delete('/', (req, res)=>{
-    res.send("delete router");
+
+app.use( (req, res)=>{
+    res.send("404 error");
 })
 
 module.exports=app;
