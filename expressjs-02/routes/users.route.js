@@ -8,9 +8,7 @@ router.get('/about', (req, res)=>{
 router.get('/login', (req, res)=>{
     res.send("login router");
 })
-router.get('/register', (req, res)=>{
-    res.send("register router");
-})
+
 router.post('/', (req, res)=>{
     res.send("post router");
 })
