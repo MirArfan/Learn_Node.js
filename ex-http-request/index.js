@@ -11,19 +11,32 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
-app.post("/user", (req, res)=>{
-    const name=req.body.name;
-    res.send(`welcome ${name}`);
+
+
+app.get("/register", (req, res)=>{
+    res.sendFile(__dirname+"/index.html");
 })
 
-app.get("/", (req, res) => {
-    const id=req.header('id');
-    const name=req.header('name');
-    res.send(`student id is ${id} and name is ${name}`);
+app.post("/register", (req, res)=>{
+    const fullName=req.body.fullName;
+    const age=req.body.age;
+
+    res.send(`<h3> your name is : ${fullName} and age is : ${age} <h3/>`);
+})
+
+// app.post("/user", (req, res)=>{
+//     const name=req.body.name;
+//     res.send(`welcome ${name}`);
+// })
+
+// app.get("/", (req, res) => {
+//     const id=req.header('id');
+//     const name=req.header('name');
+//     res.send(`student id is ${id} and name is ${name}`);
    
 
 
-})
+// })
 
 ///.......http request with ...route.... parameter.....///////////
 
