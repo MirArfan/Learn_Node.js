@@ -4,12 +4,12 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
 /// create product schema
-const productSchema= new mongoose.Schema({
+const productSchema = new mongoose.Schema({
     title: {
-        type: String, 
+        type: String,
         required: true,
     },
     price: {
@@ -28,7 +28,7 @@ const productSchema= new mongoose.Schema({
 
 
 /// create Model
-const Product=mongoose.model("Products", productSchema)
+const Product = mongoose.model("Products", productSchema)
 
 
 const connectDB = async () => {
@@ -50,42 +50,58 @@ const connectDB = async () => {
 //         process.exit(1);
 //     })
 
-app.post("/products", async(req, res) => {
+app.get("/products", async (req, res) => {
     try {
-        const title =req.body.title;
-        const price=req.body.price;
-        const description=req.body.description;
-        
+        // const title = req.body.title;
+        // const price = req.body.price;
+        // const description = req.body.description;
+
         // const newProduct=new Product({
         //     title: title,
         //     price: price,
         //     description: description
         // })
-        
+
         // const productData =await newProduct.save();
 
         // jodi many data send korte cai tkn, direct
         // schema create na kore emne  model er throw te send korbo
 
-        const productData= await Product.insertMany([
-            {
-                title: " redmi node 7",
-                price: 14000,
-                description: "China Apple version"
-            },
-            {
-                title: " redmi node 9",
-                price: 13000,
-                description: "China version"
-            },
-        ])
+        // const productData= await Product.insertMany([
+        //     {
+        //         title: " redmi node 7",
+        //         price: 14000,
+        //         description: "China Apple version"
+        //     },
+        //     {
+        //         title: " redmi node 9",
+        //         price: 13000,
+        //         description: "China version"
+        //     },
+        // ])
+        const price=req.body.price;
+        const productData = await Product.find({ price: { $gt: price } })
+        if (productData) {
+            res.status(200).send({
+                success: true,
+                message: "return All Products",
+                data: productData
+            })
+            // res.status(200).send(productData);
+        }
+        else {
+            res.status(400).send({
+                success: false,
+                message: "products not found",
+            })
+        }
 
-        res.status(201).send(productData)
+        // res.status(201).send(productData)
     } catch (error) {
-        res.status(500).send({ message: error.message})
+        res.status(500).send({ message: error.message })
     }
 })
-app.listen(PORT, async() => {
+app.listen(PORT, async () => {
     console.log("running");
     await connectDB();
 
