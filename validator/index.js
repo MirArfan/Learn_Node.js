@@ -80,7 +80,11 @@ app.get("/products", async (req, res) => {
         //     },
         // ])
         const price=req.body.price;
-        const productData = await Product.find({ price: { $gt: price } })
+        const title=req.body.title;
+        const queryData= {
+            $and:[{price: {$gt:6}}, {title: {$eq: title}}]
+        }
+        const productData = await Product.find(queryData)
         if (productData) {
             res.status(200).send({
                 success: true,
