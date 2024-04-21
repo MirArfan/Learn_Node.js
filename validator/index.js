@@ -89,6 +89,7 @@ app.get("/products", async (req, res) => {
             })
             // res.status(200).send(productData);
         }
+        // ll?
         else {
             res.status(400).send({
                 success: false,
