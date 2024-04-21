@@ -82,9 +82,12 @@ app.get("/products", async (req, res) => {
         const price=req.body.price;
         const title=req.body.title;
         const queryData= {
-            $and:[{price: {$gt:6}}, {title: {$eq: title}}]
+            $or:[{price: {$gt:6}}, {title: {$eq: title}}]
         }
-        const productData = await Product.find(queryData)
+        // sort({price:-1})
+        // count()
+        // 
+        const productData = await Product.find(queryData).sort({price:-1}).select({title:1, price:1, _id:0})
         if (productData) {
             res.status(200).send({
                 success: true,
