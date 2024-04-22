@@ -49,6 +49,28 @@ const connectDB = async () => {
 //         console.log(err);
 //         process.exit(1);
 //     })
+app.delete("/products/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const product = await Product.deleteOne({ _id: id })
+        if (product) {
+            res.status(200).send({
+                message: "deleted single product",
+                data: product,
+            })
+
+        }
+        else {
+            res.status(400).send({
+                message: "failed",
+
+            })
+        }
+    } catch (error) {
+        res.status(500).send({ message: error.message })
+    }
+})
+
 
 app.get("/products", async (req, res) => {
     try {
@@ -79,15 +101,15 @@ app.get("/products", async (req, res) => {
         //         description: "China version"
         //     },
         // ])
-        const price=req.body.price;
-        const title=req.body.title;
-        const queryData= {
-            $or:[{price: {$gt:6}}, {title: {$eq: title}}]
+        const price = req.body.price;
+        const title = req.body.title;
+        const queryData = {
+            $or: [{ price: { $gt: 6 } }, { title: { $eq: title } }]
         }
         // sort({price:-1})
         // count()
         // 
-        const productData = await Product.find(queryData).sort({price:-1}).select({title:1, price:1, _id:0})
+        const productData = await Product.find(queryData).sort({ price: -1 }).select({ title: 1 })
         if (productData) {
             res.status(200).send({
                 success: true,
