@@ -29,7 +29,18 @@ const productSchema = new mongoose.Schema({
     createAt: {
         type: Date,
         default: Date.now
+    },
+    phone:{
+        type: String,
+        required: [true, " num is required"],
+        validate:{
+            validator: function(v){
+                return /\d{3}-\d{3}-\d{4}/.test(v);
+            },
+            message:(props)=> `${props.value} is not valid num`
+        }
     }
+
 })
 
 
