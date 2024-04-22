@@ -131,6 +131,46 @@ app.get("/products", async (req, res) => {
         res.status(500).send({ message: error.message })
     }
 })
+
+
+app.put("/products/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const title=req.body.title;
+        const updatedProducts = await Product.findByIdAndUpdate({ _id: id },
+            {
+                $set: {
+                    title: title,
+                }
+            },
+            {
+                new:true,
+            }
+        )
+
+        if (updatedProducts) {
+            res.status(200).send({
+                success: true,
+                message: "Product is updated",
+                data: updatedProducts
+            })
+           
+        }
+        else {
+            res.status(400).send({
+                success: false,
+                message: "products not found",
+            })
+        }
+
+    } catch (error) {
+        res.status(500).send({ message: error.message })
+    }
+})
+
+
+
+
 app.listen(PORT, async () => {
     console.log("running");
     await connectDB();
