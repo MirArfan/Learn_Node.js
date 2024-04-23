@@ -5,12 +5,17 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 require('dotenv').config();
 const User = require("./models/user.model")
+const encrypt = require('mongoose-encryption');
+require("dotenv").config();
 
-// console.log(process.env.PORT);
+const PORT = 3000;
+
 
 // connection is not woring
 
-const dbURL = process.env.MONGO_URL
+const dbURL = process.env.MONGO_URL;
+// console.log(dbURL)
+
 
 // console.log("MongoDB URL:", dbURL);
 mongoose.connect(dbURL)
@@ -23,8 +28,8 @@ mongoose.connect(dbURL)
     });
 
 
-const PORT = 3000;
-require("dotenv").config();
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
@@ -47,7 +52,7 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOme({ email: email })
+        const user = await User.findOne({ email: email })
         if(user && user.password==password){
           res.status(200).json({message: "valid user"})
         }
