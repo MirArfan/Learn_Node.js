@@ -8,6 +8,7 @@ const User = require("./models/user.model")
 
 // console.log(process.env.PORT);
 
+// connection is not woring
 
 const dbURL = process.env.MONGO_URL
 
