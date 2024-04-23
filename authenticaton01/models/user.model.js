@@ -1,5 +1,5 @@
 const mongoose=require("mongoose");
-constuserShema=mongoose.Schema({
+constuserShema=new mongoose.Schema({
     email:{
         type: String,
         require: true
