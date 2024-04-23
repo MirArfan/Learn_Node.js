@@ -7,6 +7,12 @@ require('dotenv').config();
 const User = require("./models/user.model")
 const encrypt = require('mongoose-encryption');
 require("dotenv").config();
+const md5 = require("md5")
+
+//hasing with solting
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 
 const PORT = 3000;
 
@@ -42,23 +48,41 @@ app.get("/", (req, res) => {
 app.post("/register", async (req, res) => {
     // const { email, password } = req.body;
     try {
-        const newUser = new User(req.body)
-        await newUser.save();
-        res.status(201).json(newUser)
+
+        bcrypt.genSalt(saltRounds, function (err, salt) {
+            bcrypt.hash(req.body.password, salt, async function (err, hash) {
+                const newUser = new User({
+                    email: req.body.email,
+                    password: hash,
+                })
+                await newUser.save();
+                res.status(201).json(newUser)
+            });
+           
+        });
+
+
+        
     } catch (error) {
         res.status(500).json(error)
     }
 })
 app.post("/login", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = req.body.email;
+        const password = req.body.password;
         const user = await User.findOne({ email: email })
-        if(user && user.password==password){
-          res.status(200).json({message: "valid user"})
+
+        if (user) {
+            bcrypt.compare(password, user.password, function (err, result) {
+                if (result === true) {
+                    res.status(200).json({ message: "valid user" })
+                }
+            });
+
         }
-        else
-        {
-            res.status(404).json({message: " not a valid user"})
+        else {
+            res.status(404).json({ message: " not a valid user" })
         }
     } catch (error) {
         res.status(500).json(error)

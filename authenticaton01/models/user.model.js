@@ -15,11 +15,11 @@ const userSchema=new mongoose.Schema({
 })
 
 
-const encKey = process.env.ENC_KEY;
+// const encKey = process.env.ENC_KEY;
 
-userSchema.plugin(encrypt, {
-secret: encKey,
-encryptedFields: ['password'] });
+// userSchema.plugin(encrypt, {
+// secret: encKey,
+// encryptedFields: ['password'] });
 
 
 module.exports=mongoose.model("user", userSchema)
