@@ -1,6 +1,6 @@
 const passport = require("passport");
 const User = require("../models/user.model");
-const LocalStrategy = require("passport").Strategy;
+const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 
 
@@ -12,7 +12,8 @@ passport.use(
             if (!user) {
                 return done(null, false, { message: "Incorrect Username" });
             }
-            if (!bcrypt.compare(password, user.password)) {
+            const passwordMatch = await bcrypt.compare(password, user.password);
+            if (!passwordMatch) {
                 return done(null, false, { message: "Incorrect password" });
             }
             return done(null, user);
@@ -21,6 +22,8 @@ passport.use(
         }
     })
 );
+
+
 
 
 // create session id

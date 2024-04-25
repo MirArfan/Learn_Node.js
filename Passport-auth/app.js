@@ -71,8 +71,16 @@ app.post("/register", async (req, res) => {
     }
 })
 
+//checked logged
+const checkLoggedIn=(req, res, next)=>{
+    if(req.isAuthenticated()){
+            return res.redirect("/profile")
+    }
+    next();
+}
+
 //login : get;
-app.get("/login", (req, res) => {
+app.get("/login", checkLoggedIn, (req, res) => {
     res.render("login");
 })
 
@@ -96,12 +104,19 @@ app.get("/logout", (req, res) => {
     }
 })
 
+const checkAuth=(req, res, next)=>{
+    if(req.isAuthenticated()){
+          return next();
+    }
+    res.redirect("/login")
+}
+
 //profile route if user auth
-app.get("/profile", (req, res) => {
+app.get("/profile", checkAuth, (req, res) => {
     if(req.isAuthenticated){
         res.render("profile");
     }
-    res.redirect("login");
+   
 })
 
 module.exports = app;
