@@ -44,79 +44,62 @@ app.use(passport.session());
 
 // base url
 app.get("/", (req, res) => {
-    res.render("index");
-})
+  res.render("index");
+});
 
-// register :get
-app.get("/register", (req, res) => {
-    res.render("register");
-})
+const checkLoggedIn = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return res.redirect("/profile");
+  }
+  next();
+};
 
-//register : post
-app.post("/register", async (req, res) => {
-    try {
-        const user = await User.findOne({ username: req.body.username })
-        if (user) return res.status(404).send("user is already exist")
-        bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
-            const newUser = new User({
-                username: req.body.username,
-                password: hash,
-            });
-            await newUser.save();
-            res.status(201).redirect("/login")
-        });
-
-    } catch (error) {
-        res.status(500).send(error.msesage)
-    }
-})
-
-//checked logged
-const checkLoggedIn=(req, res, next)=>{
-    if(req.isAuthenticated()){
-            return res.redirect("/profile")
-    }
-    next();
-}
-
-//login : get;
+// login : get
 app.get("/login", checkLoggedIn, (req, res) => {
-    res.render("login");
-})
+  res.render("login");
+});
 
-//login : post
-app.post('/login',
-    passport.authenticate('local', { failureRedirect: '/login', successRedirect: "/profile" }),
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
 );
 
-//logged out
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    successRedirect: "/profile",
+  }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect("/");
+  }
+);
+
+const checkAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+};
+
+// profile protected route
+app.get("/profile", checkAuthenticated, (req, res) => {
+  res.render("profile", { username: req.user.username });
+});
+
+// logout route
 app.get("/logout", (req, res) => {
-    try {
-        req.logOut((err)=>{
-            if(err){
-                return next(err)
-            }
-            res.redirect("/");
-        })
-       
-    } catch (error) {
-        res.status(500).send(error.msesage)
-    }
-})
-
-const checkAuth=(req, res, next)=>{
-    if(req.isAuthenticated()){
-          return next();
-    }
-    res.redirect("/login")
-}
-
-//profile route if user auth
-app.get("/profile", checkAuth, (req, res) => {
-    if(req.isAuthenticated){
-        res.render("profile");
-    }
-   
-})
+  try {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect("/");
+    });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 module.exports = app;

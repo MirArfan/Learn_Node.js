@@ -5,7 +5,7 @@ const userSchema=mongoose.Schema({
     require: true,
     unique: true
   },
-  password: {
+  googleId: {
     type: String,
     require: true,
    
